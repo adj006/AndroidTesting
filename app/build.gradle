@@ -35,6 +35,13 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    // Always show the result of every unit test when running via command line, even if it passes.
+    testOptions.unitTests {
+        includeAndroidResources = true
+
+        // ...
+    }
 }
 
 dependencies {
