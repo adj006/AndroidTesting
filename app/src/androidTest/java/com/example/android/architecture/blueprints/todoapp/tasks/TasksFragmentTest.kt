@@ -16,6 +16,7 @@ import com.example.android.architecture.blueprints.todoapp.ServiceLocator
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.FakeAndroidTestRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
@@ -71,6 +72,26 @@ class TasksFragmentTest {
                 TasksFragmentDirections.actionTasksFragmentToTaskDetailFragment("id1")
         )
 
+    }
+
+    @Test
+    fun clickAddTaskButton_navigateToAddEditFragment() = runBlockingTest {
+        // GIVEN - On the tasks screen
+        val scenario = launchFragmentInContainer<TasksFragment>(Bundle(), R.style.AppTheme)
+
+        val navController = mock(NavController::class.java)
+
+        scenario.onFragment {
+            Navigation.setViewNavController(it.view!!, navController)
+        }
+
+        // WHEN - Click on + FAB
+        onView(withId(R.id.add_task_fab)).perform(click())
+
+        // THEN - Verify that we navigate to the add edit task screen
+        verify(navController).navigate(
+                TasksFragmentDirections.actionTasksFragmentToAddEditTaskFragment(null, "New Task")
+        )
     }
 
 }
