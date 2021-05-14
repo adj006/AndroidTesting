@@ -1,10 +1,12 @@
 package com.example.android.architecture.blueprints.todoapp.tasks
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.contrib.RecyclerViewActions
@@ -85,12 +87,13 @@ class TasksFragmentTest {
             Navigation.setViewNavController(it.view!!, navController)
         }
 
-        // WHEN - Click on + FAB
+        // WHEN - Click on '+' FAB
         onView(withId(R.id.add_task_fab)).perform(click())
 
         // THEN - Verify that we navigate to the add edit task screen
         verify(navController).navigate(
-                TasksFragmentDirections.actionTasksFragmentToAddEditTaskFragment(null, "New Task")
+                TasksFragmentDirections.actionTasksFragmentToAddEditTaskFragment(
+                        null, getApplicationContext<Context>().getString(R.string.add_task))
         )
     }
 
