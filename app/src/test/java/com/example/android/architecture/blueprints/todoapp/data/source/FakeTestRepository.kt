@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import com.example.android.architecture.blueprints.todoapp.data.Result
+import com.example.android.architecture.blueprints.todoapp.data.Result.Error
+import com.example.android.architecture.blueprints.todoapp.data.Result.Success
+import com.example.android.architecture.blueprints.todoapp.data.Result.Loading
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import kotlinx.coroutines.runBlocking
 
@@ -21,9 +24,9 @@ class FakeTestRepository : TasksRepository {
 
     override suspend fun getTasks(forceUpdate: Boolean): Result<List<Task>> {
         if (shouldReturnError) {
-            return Result.Error(Exception("Test exception"))
+            return Error(Exception("Test exception"))
         }
-        return Result.Success(tasksServiceData.values.toList())
+        return Success(tasksServiceData.values.toList())
     }
 
     override suspend fun refreshTasks() {
@@ -43,12 +46,12 @@ class FakeTestRepository : TasksRepository {
         runBlocking { refreshTasks() }
         return observableTasks.map { tasks ->
             when (tasks) {
-                is Result.Loading -> Result.Loading
-                is Result.Error -> Result.Error(tasks.exception)
-                is Result.Success -> {
+                is Loading -> Loading
+                is Error -> Error(tasks.exception)
+                is Success -> {
                     val task = tasks.data.firstOrNull() { it.id == taskId }
-                            ?: return@map Result.Error(Exception("Not found"))
-                    Result.Success(task)
+                            ?: return@map Error(Exception("Not found"))
+                    Success(task)
                 }
             }
         }
@@ -56,12 +59,12 @@ class FakeTestRepository : TasksRepository {
 
     override suspend fun getTask(taskId: String, forceUpdate: Boolean): Result<Task> {
         if (shouldReturnError) {
-            return Result.Error(Exception("Test exception"))
+            return Error(Exception("Test exception"))
         }
         tasksServiceData[taskId]?.let {
-            return Result.Success(it)
+            return Success(it)
         }
-        return Result.Error(Exception("Could not find task"))
+        return Error(Exception("Could not find task"))
     }
 
     override suspend fun saveTask(task: Task) {
